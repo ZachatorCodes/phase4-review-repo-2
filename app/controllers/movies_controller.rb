@@ -1,5 +1,5 @@
 class MoviesController < ApplicationController
-    skip_before_action :authorize, only: [:index, :word_search]
+    skip_before_action :authorize, only: [:index, :word_search, :genrecount]
 
     def index 
         movies = Movie.all
@@ -26,6 +26,29 @@ class MoviesController < ApplicationController
         movie = Movie.find(params[:id])
         movie.destroy 
         head :no_content
+    end
+
+    def genrecount
+        movies = Movie.all
+        results = {}
+
+        genres = movies.map do |movie|
+            movie.genre
+        end
+
+        # Solution 1
+        genre_tally = genres.tally
+
+        #Solution 2
+        genres.each do |genre|
+            if results.has_key?(genre)
+                results[genre] += 1
+            else
+                results[genre] = 1
+            end
+        end
+
+        render json: results
     end
 
  
